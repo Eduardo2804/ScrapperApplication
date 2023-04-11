@@ -1,15 +1,46 @@
-const cherio = require("cherio");
-const request = require("request");
+
+//importing the library
+const puppeteer = require("puppeteer");
 const fs = require("fs");
 
-var writeStream = fs.createWriteStream("imagesLinks.txt", "utf-8");
 
+(async () => {
 
-request("https://www.irishtimes.com/", (err, resp, html)=>{
+    try{
 
-    if(!err && resp.statusCode == 200){
-        console.log("connection success");
-    } else {
-        console.log("failed");
-    }
-});
+    const brower = await puppeteer.launch();
+    const page = await brower.newPage();
+
+    //defining the url to go to
+    await page.goto("https://www.orcawise.com/blogs/blog-what-is-nlp");
+    
+
+    const imgList = await page.evaluate(() => {
+
+        const nodeList = document.querySelectorAll("img");
+
+        const imgArray = [...nodeList]
+
+        const imgList = imgArray.map( ({src}) => ({src}))
+
+        return imgList;
+
+     });
+
+     //import imgList to jason
+
+     fs.writeFile("listUrl.json", JSON.stringify(imgList, null, 2), err => {
+        if(err) throw new Error("something wrong");
+        console.log("sucessfull");
+     })
+
+     
+
+           
+   
+   await brower.close();
+} catch(error){
+    console.log("error");
+}
+})();
+

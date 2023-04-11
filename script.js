@@ -1,44 +1,43 @@
-//npm install cherio dependecy
-//npm install request dependecy
 
-const cherio = require("cherio");
-const request = require("request");
+const puppeteer = require("puppeteer");
 const fs = require("fs");
-
-//create a writestream and saving urls in txt file
-//flag a is used to append new links to the file
-var writeStream = fs.createWriteStream("linksImages.xml", {flags: 'a'},"UTF-8")
-
-var x = "https://www.orcawise.com/blogs/vscode-gitlab-personal-access-token/"
+const { error } = require("console");
 
 
-request(x, (err, resp, html)=>{
-
-    if(!err && resp.statusCode == 200){
-        console.log("connection success");
-    
-
-        //defining cherio and $ object
-        const $ = cherio.load(html);
-
-        //grabing the images
-        $("img").each((index, image) => {
-
-            var img = $(image).attr("src");
-            var baseUrl = x;
-            var links = baseUrl + img;
-        
-            
-           //salving the images in txt file
-           writeStream.write(links);
-           writeStream.write("\n");
+//puppeteer will open browser(launch) and then open new page that will go to url setted up
+(async () => {
+    const browser = await puppeteer.launch();
+    const page = await browser.newPage();
+  
+    await page.goto('https://www.orcawise.com/blogs/blog-what-is-nlp');
 
 
-        });
+    //function evaluate will be executed on the brownser created by puppeteer
+    //it will go throw the webesite and get what it is scrapping
+        const listImages = await page.evaluate(() => {
 
-    } else {
-        console.log("conncection failed");
+        //get all the images in the website
 
-    }
+        const listNode = document.querySelectorAll("img")
 
-});
+        //transform nodelist to array
+
+        const arrayImages = [...listNode]
+
+        //transform array to json format
+
+        const listImages = arrayImages.map( img => ({src: img.src}))
+
+        return listImages;
+
+    });
+
+        //writing data in xml file
+        fs.writeFileSync("listUrlXML.xml", JSON.stringify(listImages, null, 2), err => {
+            if(err) throw new Error("something went wrong")
+            console.log("success")
+        })
+
+  
+    await browser.close();
+  })();

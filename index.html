@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Getting Images after Scrapping</title>
+</head>
+<body>
+    <style>
+        .container {
+            display: block;
+            gap: .4rem;
+        }
+
+        li {
+            list-style: none;
+        }
+
+        li img{
+            width: 50%;
+            height: 50%;
+            object-fit: cover;
+        }
+
+    </style>
+    <div class="container"></div>
+    <script>
+        (async() => {
+            //open the file json
+            const response = await fetch("./listUrl.json");
+            const data = await response.json();
+
+            //treating the data to send to html
+            const htmlList = data.map(image => `<li><img src="${image.src}"></li>`).join(" ");
+
+            //send the data to html
+            document.querySelector(".container").innerHTML = htmlList;
+
+
+        })();
+    </script>
+</body>
+</html>
