@@ -12,7 +12,7 @@ const fs = require("fs");
     const page = await brower.newPage();
 
     //defining the url to go to
-    await page.goto("https://www.orcawise.com/blogs/blog-what-is-nlp");
+    await page.goto("https://www.bunsen.ie/");
     
 
     const imgList = await page.evaluate(() => {
