@@ -12,16 +12,18 @@ const fs = require("fs");
     const page = await brower.newPage();
 
     //defining the url to go to
-    await page.goto("https://www.bunsen.ie/");
+    await page.goto(('https://www.orcawise.com/blogs/blog-ways-to-use-machine-learning-marketing'), {
+        waitUntil: 'load'
+    });
     
 
     const imgList = await page.evaluate(() => {
 
-        const nodeList = document.querySelectorAll("img");
+        const nodeList = document.querySelectorAll('img');
 
         const imgArray = [...nodeList]
 
-        const imgList = imgArray.map( ({src}) => ({src}))
+        const imgList = imgArray.map( img => ({src: img.src}))
 
         return imgList;
 
